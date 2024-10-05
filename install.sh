@@ -55,10 +55,13 @@ if [[ "${INSTALL}" == "true" ]]; then
         install ./target/release/i3-autolayout "${PREFIX}/bin" &&
         sed "s#ExecStart=i3-autolayout#ExecStart=${PREFIX}/bin/i3-autolayout#g" \
             ./systemd/i3-autolayout.service \
-            >"${PREFIX}/lib/systemd/user/i3-autolayout.service" &&
+            >"/etc/lib/systemd/user/i3-autolayout.service" &&
         sed "s#AUTOLAYOUT_BIN_DIR=%%%#AUTOLAYOUT_BIN_DIR=${PREFIX}/bin#g" \
             ./env/env \
             >"${PREFIX}/env/env"
+    systemctl daemon-reload
+    systemctl enable i3-autolayout
+    systemctl start i3-autolayout
 fi
 
 if [[ "${REFRESH}" == "true" ]]; then

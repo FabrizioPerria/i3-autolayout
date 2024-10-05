@@ -7,3 +7,6 @@ StartLimitBurst=5
 ExecStart=i3-autolayout autolayout
 Restart=on-failure
 RestartSec=3s
+
+[Install]
+WantedBy=multi-user.target
