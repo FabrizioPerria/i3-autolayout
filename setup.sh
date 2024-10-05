@@ -50,21 +50,20 @@ if [[ "${INSTALL}" == "true" ]]; then
     echo "Install in '${PREFIX}'" &&
         mkdir -p "${PREFIX}" &&
         mkdir -p "${PREFIX}/bin" &&
-        mkdir -p "${PREFIX}/lib/systemd/user" &&
         mkdir -p "${PREFIX}/env" &&
         install ./target/release/i3-autolayout "${PREFIX}/bin" &&
         sed "s#ExecStart=i3-autolayout#ExecStart=${PREFIX}/bin/i3-autolayout#g" \
             ./systemd/i3-autolayout.service \
-            >"/etc/lib/systemd/user/i3-autolayout.service" &&
-        sed "s#AUTOLAYOUT_BIN_DIR=%%%#AUTOLAYOUT_BIN_DIR=${PREFIX}/bin#g" \
-            ./env/env \
-            >"${PREFIX}/env/env"
-    systemctl daemon-reload
-    systemctl enable i3-autolayout
-    systemctl start i3-autolayout
+            >"/etc/systemd/system/i3-autolayout.service" &&
+        systemctl daemon-reload &&
+        systemctl start i3-autolayout &&
+        systemctl enable i3-autolayout
 fi
 
 if [[ "${REFRESH}" == "true" ]]; then
+    sed "s#AUTOLAYOUT_BIN_DIR=%%%#AUTOLAYOUT_BIN_DIR=${PREFIX}/bin#g" \
+        ./env/env \
+        >"${PREFIX}/env/env"
     THEHOME=$(eval echo "~${THEUSER}")
 
     read -r -p "Source environment for user '${THEUSER}'? [y/N]: " ans
